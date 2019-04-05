@@ -1,8 +1,6 @@
 import subprocess
 import numpy as np
 import os.path
-import pandas as pd
-import pickle
 import json
 
 # TODO: end it with the slash
