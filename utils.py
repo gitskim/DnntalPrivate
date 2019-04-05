@@ -6,10 +6,9 @@ import pickle
 import json
 
 # TODO: end it with the slash
-ORIGINAL_PATH = '/Users/suhyunkim/git/DnntalPrivate/img'
+ORIGINAL_PATH = '/Users/suhyunkim/git/DnntalPrivate/img/mask/'
 # TODO: end it with the slash
-RETRO_PATH = '/Users/suhyunkim/git/DnntalPrivate/img'
-
+RETRO_PATH = '/Users/suhyunkim/git/DnntalPrivate/img/radio/'
 
 is_diving = True
 
@@ -37,15 +36,21 @@ arr_difficulty_score = np.array([])
 
 
 def do():
+    counter = 0
     with open('data.json') as json_file:
         data = json.load(json_file)
         for dictionary in data:
-            link = dictionary["Labeled Data"]
-            mask = dictionary["Masks"]
-            retro = mask["Retro"]
+            original_link = dictionary["Labeled Data"]
 
-            run_command(f"wget {link} -P {ORIGINAL_PATH}")
-            run_command(f"wget {retro} -P {RETRO_PATH}")
+            if "Masks" in dictionary:
+                counter += 1
+                mask = dictionary["Masks"]
+                retro_link = mask["Retro"]
+                filename = f"file{counter}.jpg"
+                retro_filename = f"{RETRO_PATH}{filename}"
+                original_filename = f"{ORIGINAL_PATH}{filename}"
+                run_command(f"wget {retro_link} -O {retro_filename}")
+                run_command(f"wget {original_link} -O {original_filename}")
 
 
 do()
