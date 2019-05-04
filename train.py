@@ -1,16 +1,7 @@
-#import dependencies
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 import zipfile
-import cv2
-
-#For the preprocessing
-import sys
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-from skimage.transform import resize
-from PIL import Image
-import glob
+import subprocess
 
 # --- get data ---
 def run_command(command, logfile=None, print_output=True, return_output=True):
@@ -32,12 +23,13 @@ run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
     -O /home/suhyunkim011/dentist_AI.zip")
 
 local_zip = '/home/suhyunkim011/dentist_AI.zip'
-zip_ref = zipfile.ZipFile(local_zip, 'r')
+zip_ref = zipfile.ZipFile('/home/suhyunkim011/dentist_AI.zip', 'r')
 
-zip_ref.extractall(local_zip)
+zip_ref.extractall('/home/suhyunkim011/dentist_AI')
 
 zip_ref.close()
 
+<<<<<<< HEAD
 for path_original in filelist_original:
   clahe(path_original)
 for path_mask in filelist_original:
@@ -59,5 +51,6 @@ filelist_masks=sorted(filelist_masks)
 resolution=2.0
 
 
+train_path = '/home/suhyunkim011/dentist_AI/dentist_AI'
 
 
