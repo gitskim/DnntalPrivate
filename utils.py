@@ -33,6 +33,17 @@ arr_total_score = np.array([])
 arr_difficulty_score = np.array([])
 
 
+def download_zip():
+    run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
+        -O ./dnntal.zip")
+
+    local_zip = '/home/ek2993/dnntal/DnntalPrivate/dnntal.zip'
+    zip_ref = zipfile.ZipFile('/home/ek2993/dnntal/DnntalPrivate/dnntal.zip', 'r')
+
+    zip_ref.extractall('/home/ek2993/dnntal/DnntalPrivate/dnntal')
+
+    zip_ref.close()
+
 def do():
     counter = 0
     with open('data.json') as json_file:
@@ -49,6 +60,3 @@ def do():
                 original_filename = f"{ORIGINAL_PATH}{filename}"
                 run_command(f"wget {retro_link} -O {retro_filename}")
                 run_command(f"wget {original_link} -O {original_filename}")
-
-
-do()
