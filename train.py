@@ -20,12 +20,12 @@ def run_command(command, logfile=None, print_output=True, return_output=True):
         return str(output)
 
 run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
-    -O /home/suhyunkim011/dentist_AI.zip")
+    -O ./dnntal.zip")
 
-local_zip = '/home/suhyunkim011/dentist_AI.zip'
-zip_ref = zipfile.ZipFile('/home/suhyunkim011/dentist_AI.zip', 'r')
+local_zip = '/home/ek2993/dnntal/DnntalPrivate/dnntal.zip'
+zip_ref = zipfile.ZipFile('/home/ek2993/dnntal/DnntalPrivate/dnntal.zip', 'r')
 
-zip_ref.extractall('/home/suhyunkim011/dentist_AI')
+zip_ref.extractall('/home/ek2993/dnntal/DnntalPrivate/dnntal')
 
 zip_ref.close()
 
