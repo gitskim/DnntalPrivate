@@ -29,7 +29,7 @@ zip_ref.extractall('/home/suhyunkim011/dentist_AI')
 
 zip_ref.close()
 
-<<<<<<< HEAD
+'''
 for path_original in filelist_original:
   clahe(path_original)
 for path_mask in filelist_original:
@@ -40,8 +40,7 @@ im_width = 128
 im_height = 128
 border = 5
 im_chan = 2 # Number of channels: first is original and second cumsum(axis=0)
-
-''' 
+ 
 filelist_original = glob.glob(os.path.join('/home/ek2993/dnntal/train/original/', '*.jpg'))
 filelist_original=sorted(filelist_original)
 filelist_masks = glob.glob(os.path.join('/home/ek2993/dnntal/train/masks/', '*.jpg'))
