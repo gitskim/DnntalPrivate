@@ -58,7 +58,7 @@ def run_command(command, logfile=None, print_output=True, return_output=True):
 im_width = 128
 im_height = 128
 border = 5
-im_chan = 2  # Number of channels: first is original and second cumsum(axis=0)
+im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
     os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/original', '*.jpg'))
@@ -102,21 +102,14 @@ for i, filelist in enumerate(filelist_original):
     # --> May not be good for our case, losses information
     x_img = resize(x_img, (128, 128, 1), mode='constant', preserve_range=True)
 
-    # Create cumsum x
-    x_center_mean = x_img[border:-border, border:-border].mean()
-    x_csum = (np.float32(x_img) - x_center_mean).cumsum(axis=0)
-    x_csum -= x_csum[border:-border, border:-border].mean()
-    x_csum /= max(1e-3, x_csum[border:-border, border:-border].std())
-
     # Load Y
     mask = img_to_array(load_img(filelist_masks[i], grayscale=True))
     # --> May not be good, same reason
     mask = resize(mask, (128, 128, 1), mode='constant', preserve_range=True)
 
     # Save images
-    X[i, ..., 0] = x_img.squeeze() / 255
-    X[i, ..., 1] = x_csum.squeeze()
-
+    X[i] = x_img / 255
+    y[i] = mask/255
 
 # Custom IoU metric
 def mean_iou(y_true, y_pred):
@@ -198,6 +191,9 @@ def dsc(y_true, y_pred):
     score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
     return score
 
+kinit = 'glorot_normal'
+epsilon = 1e-5
+smooth = 1
 
 def UnetConv2D(input, outdim, is_batchnorm, name):
     x = Conv2D(outdim, (3, 3), strides=(1, 1), kernel_initializer=kinit, padding="same", name=name + '_1')(input)
@@ -262,7 +258,7 @@ batchnum = 16
 input_size = (img_row, img_col, img_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
 model = unet(sgd, input_size, tversky_loss)
-hist = model.fit(imgs_train, imgs_mask_train, validation_split=0.15,
+hist = model.fit(X, y, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
                  verbose=True)
 
