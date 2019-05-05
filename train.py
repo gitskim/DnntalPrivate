@@ -5,11 +5,11 @@ import subprocess
 import glob
 import cv2
 from tqdm import tqdm
-
+import sys
 # For building the model_2
 import tensorflow as tf
 import keras as keras
-from keras.models import Model, load_model
+from tf.keras.models import Model, load_model
 from keras.layers import Input
 from keras.layers.core import Lambda, RepeatVector, Reshape
 from keras.layers.convolutional import Conv2D, Conv2DTranspose
@@ -32,6 +32,7 @@ from keras.layers.normalization import BatchNormalization
 from sklearn.metrics import roc_curve, auc, precision_recall_curve  # roc curve tools
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from skimage.transform import resize
 
 PATH_HOME = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
 
@@ -86,14 +87,16 @@ train_ids = filelist_original[2]
 
 train_path = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
 # Get and resize train images and masks
-X = np.zeros((len(train_ids), im_height, im_width, im_chan), dtype=np.float32)
-y = np.zeros((len(train_ids), im_height, im_width, 1), dtype=np.float32)
-X_feat = np.zeros((len(train_ids)), dtype=np.float32)
-for n, id_ in tqdm(enumerate(train_ids), total=len(train_ids)):
+X = np.zeros((len(filelist_original), im_height, im_width, im_chan), dtype=np.float32)
+y = np.zeros((len(filelist_original), im_height, im_width, 1), dtype=np.float32)
+print('suhyun before for loop')
+sys.stdout.flush()
+for i, filelist in enumerate(filelist_original):
     path = train_path
-
+    print('suhyun id_')
+    sys.stdout.flush()
     # Load X
-    img = load_img(path + '/train/original/' + id_, grayscale=True)
+    img = load_img(filelist_original[i], grayscale=True)
     x_img = img_to_array(img)
 
     # --> May not be good for our case, losses information
@@ -106,13 +109,13 @@ for n, id_ in tqdm(enumerate(train_ids), total=len(train_ids)):
     x_csum /= max(1e-3, x_csum[border:-border, border:-border].std())
 
     # Load Y
-    mask = img_to_array(load_img(path + '/train/masks/' + id_, grayscale=True))
+    mask = img_to_array(load_img(filelist_masks[i], grayscale=True))
     # --> May not be good, same reason
     mask = resize(mask, (128, 128, 1), mode='constant', preserve_range=True)
 
     # Save images
-    X[n, ..., 0] = x_img.squeeze() / 255
-    X[n, ..., 1] = x_csum.squeeze()
+    X[i, ..., 0] = x_img.squeeze() / 255
+    X[i, ..., 1] = x_csum.squeeze()
 
 
 # Custom IoU metric
@@ -257,7 +260,7 @@ img_chan = 1
 epochnum = 100
 batchnum = 16
 input_size = (img_row, img_col, img_chan)
-
+sgd = SGD(lr=0.01, momentum=0.9)
 model = unet(sgd, input_size, tversky_loss)
 hist = model.fit(imgs_train, imgs_mask_train, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
