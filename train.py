@@ -4,6 +4,7 @@ import zipfile
 import subprocess
 import glob
 import cv2
+from tqdm import tqdm
 
 # For building the model_2
 import tensorflow as tf
@@ -73,14 +74,14 @@ def clahe(path):
     img = cv2.imread(path, 0)
     cv2.imwrite(path, clahe.apply(img))
 
-
+'''
 print("... starint clahe ...")
 for path_original in filelist_original:
     clahe(path_original)
 for path_mask in filelist_original:
     # question: why are you clahe'ing path_mask
     clahe(path_mask)
-
+'''
 train_ids = filelist_original[2]
 
 # Get and resize train images and masks
