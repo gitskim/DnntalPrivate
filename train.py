@@ -60,10 +60,10 @@ border = 5
 im_chan = 2  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
-    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/original/for_test', '*.jpg'))
+    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/original', '*.jpg'))
 filelist_original = sorted(filelist_original)
 filelist_masks = glob.glob(
-    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/masks/for_test', '*.jpg'))
+    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
 resolution = 2.0
@@ -84,6 +84,7 @@ for path_mask in filelist_original:
 '''
 train_ids = filelist_original[2]
 
+train_path = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
 # Get and resize train images and masks
 X = np.zeros((len(train_ids), im_height, im_width, im_chan), dtype=np.float32)
 y = np.zeros((len(train_ids), im_height, im_width, 1), dtype=np.float32)
