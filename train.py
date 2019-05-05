@@ -10,28 +10,28 @@ import sys
 import tensorflow as tf
 import keras as keras
 from tf.keras.models import Model, load_model
-from keras.layers import Input
-from keras.layers.core import Lambda, RepeatVector, Reshape
-from keras.layers.convolutional import Conv2D, Conv2DTranspose
-from keras.layers.pooling import MaxPooling2D
-from keras.layers.merge import concatenate
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras import backend as K
+from tf.keras.layers import Input
+from tf.keras.layers.core import Lambda, RepeatVector, Reshape
+from tf.keras.layers.convolutional import Conv2D, Conv2DTranspose
+from tf.keras.layers.pooling import MaxPooling2D
+from tf.keras.layers.merge import concatenate
+from tf.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tf.keras import backend as K
 from sklearn.model_selection import train_test_split
 
-from keras.models import Model
-from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
-from keras.layers import Activation, add, multiply, Lambda
-from keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
-from keras.optimizers import Adam, SGD, RMSprop
-from keras.initializers import glorot_normal, random_normal, random_uniform
-from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
-from keras import backend as K
-from keras.layers.normalization import BatchNormalization
+from tf.keras.models import Model
+from tf.keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
+from tf.keras.layers import Activation, add, multiply, Lambda
+from tf.keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
+from tf.keras.optimizers import Adam, SGD, RMSprop
+from tf.keras.initializers import glorot_normal, random_normal, random_uniform
+from tf.keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
+from tf.keras import backend as K
+from tf.keras.layers.normalization import BatchNormalization
 
 from sklearn.metrics import roc_curve, auc, precision_recall_curve  # roc curve tools
 from sklearn.model_selection import train_test_split
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from tf.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from skimage.transform import resize
 
 PATH_HOME = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
