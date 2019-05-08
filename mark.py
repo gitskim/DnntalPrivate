@@ -10,21 +10,22 @@ def imageshow(img, dpi=200):
 
 def checking(image):
     array2 = image.copy()
-    a,b,c = image.shape
+    length,wide, z = image.shape
+    size = 128 
+    length = int(length/size)*size
+    wide = int(wide/size)*size
 
-    
-    for x in range(0,b,30):
-        for y in range(0,a,30):
+    for x in range(0,wide,size):
+        for y in range(0,length,size):
             
-            crop = array2[y:y+20,x:x+20]
+            crop = array2[y:y+size,x:x+size]
             # Send to predcit 
+            # number = model.predict(crop)
             number = np.random.randint(0,2)
-            ## the result of the predict 
             if number == 1:
-                array2[y:y+20,x:x+20]=0
+                array2[y:y+size,x:x+size]=0
     return array2
 
-	#return array2 
 
 image = plt.imread('puppy.jpg')
 plt.imshow(checking(image))
