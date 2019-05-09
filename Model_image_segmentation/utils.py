@@ -37,10 +37,10 @@ def download_zip():
     run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
         -O ./dnntal.zip")
 
-    local_zip = '/home/ek2993/dnntal/DnntalPrivate/dnntal.zip'
-    zip_ref = zipfile.ZipFile('/home/ek2993/dnntal/DnntalPrivate/dnntal.zip', 'r')
+    local_zip = '/home/ek2993/dnntal/DnntalPrivate/dnntal'
+    zip_ref = zipfile.ZipFile(local_zip + '.zip', 'r')
 
-    zip_ref.extractall('/home/ek2993/dnntal/DnntalPrivate/dnntal')
+    zip_ref.extractall(local_zip)
 
     zip_ref.close()
 
