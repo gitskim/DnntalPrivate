@@ -2,6 +2,7 @@ import subprocess
 import numpy as np
 import os.path
 import json
+import zipfile
 
 # TODO: end it with the slash
 ORIGINAL_PATH = '/Users/suhyunkim/git/DnntalPrivate/img/mask/'
@@ -34,16 +35,14 @@ arr_difficulty_score = np.array([])
 
 
 def download_zip():
-    run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
-        -O ./dnntal.zip")
-'''
-    local_zip = '/home/ek2993/dnntal/DnntalPrivate/dnntal.zip'
-    zip_ref = zipfile.ZipFile('/home/ek2993/dnntal/DnntalPrivate/dnntal.zip', 'r')
+    # run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip -O ./dnntal.zip")
 
-    zip_ref.extractall('/home/ek2993/dnntal/DnntalPrivate/dnntal')
-
+    #TODO: fill the location of where zip is downloaded
+    local_zip = ''
+    zip_ref = zipfile.ZipFile(local_zip + '.zip', 'r')
+    zip_ref.extractall(local_zip)
     zip_ref.close()
-'''
+
 '''
 def do():
     counter = 0
