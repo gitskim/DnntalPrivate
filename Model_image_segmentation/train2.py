@@ -284,6 +284,7 @@ hist = model.fit(X, y, validation_split=0.15,
 # results = model.fit({'img': X_train, 'feat': X_feat_train}, y_train, batch_size=16, epochs=50, callbacks=callbacks)
 
 # Function to distort image
+# https://www.kaggle.com/bguberfain/elastic-transform-for-data-augmentation
 def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications).
     .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
