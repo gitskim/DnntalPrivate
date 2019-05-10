@@ -20,6 +20,7 @@ from skimage.transform import resize
 from functools import partial
 from itertools import product
 
+import loss
 
 kinit = 'glorot_normal'
 epsilon = 1e-5
@@ -75,5 +76,5 @@ def unet(opt, input_size, lossfxn):
     conv10 = Conv2D(1, (1, 1), activation='sigmoid', name='final')(conv9)
 
     model = Model(inputs=[inputs], outputs=[conv10])
-    model.compile(optimizer=opt, loss=lossfxn, metrics=[dsc, tp, tn])
+    model.compile(optimizer=opt, loss=lossfxn, metrics=[loss.dsc, loss.tp, loss.tn])
     return model
