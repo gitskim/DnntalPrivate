@@ -27,10 +27,9 @@ from skimage.transform import resize
 
 import loss
 import model
-import preprocessing
+import preprocessing as prep
 
-PATH_TRAIN = '/home/ek2993/DnntalPrivate/dnntal/dentist_AI'
-
+PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
 # Preprocessing
 im_width = 128
 im_height = 128
@@ -46,10 +45,13 @@ filelist_masks = sorted(filelist_masks)
 
 print("... starint clahe ...")
 for path_original in filelist_original:
-    preprocessing.clahe(path_original)
+    prep.clahe(path_original)
+    print(path_original)
+    prep.center_crop(path_original)
 for path_mask in filelist_original:
     # question: why are you clahe'ing path_mask
-    preprocessing.clahe(path_mask)
+    prep.clahe(path_mask)
+    prep.center_crop(path_original)
 
 train_ids = filelist_original[2]
 

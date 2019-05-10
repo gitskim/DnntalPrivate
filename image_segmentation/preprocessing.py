@@ -1,4 +1,5 @@
 import cv2
+from PIL import Image
 
 clahe_resolution = 2.0
 
@@ -13,7 +14,7 @@ def center_crop(filelist_original):
         im = Image.open(img)
         width, height = im.size
 
-        # print(f"width: {width}, {width2} height: {height}, {height2}")
+        print(width + " " + height)
 
         w_after_crop = 1300
         h_after_crop = 590
