@@ -13,7 +13,7 @@ def center_crop(filelist_original):
     im = Image.open(filelist_original)
     width, height = im.size
 
-    print(width + " " + height)
+    print("before cropping: " + str(width) + str(height))
 
     w_after_crop = 1300
     h_after_crop = 590
@@ -27,4 +27,4 @@ def center_crop(filelist_original):
     cropped_im = im.crop(crop_rectangle)
     # plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
     width, height = cropped_im.size
-    print("after cropping: " + width + " " + height)
+    print("after cropping: " + str(width) + str(height))
