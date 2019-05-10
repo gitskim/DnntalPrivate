@@ -1,99 +1,89 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+import glob
+import h5py
+import shutil
+import imgaug as aug
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import imgaug.augmenters as iaa
+from os import listdir, makedirs, getcwd, remove
+from os.path import isfile, join, abspath, exists, isdir, expanduser
+from PIL import Image
+from pathlib import Path
+from skimage.io import imread
+from skimage.transform import resize
+from keras.models import Sequential
+from keras.models import Model
+from keras.applications.vgg16 import VGG16, preprocess_input
+from keras.preprocessing.image import ImageDataGenerator,load_img, img_to_array
+from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
+from keras.layers import GlobalMaxPooling2D
+from keras.layers.normalization import BatchNormalization
+from keras.layers.merge import Concatenate
+from keras.models import Model
+from keras.optimizers import Adam, SGD, RMSprop
+from keras.callbacks import ModelCheckpoint, Callback, EarlyStopping
+from keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
+import cv2
+from keras import backend as K
 
-# The code in this notebook should work identically in TF v1 and v2
-import tensorflow as tf
-import zipfile
+def build_model():
+    input_img = Input(shape=(224,224,3), name='ImageInput')
+    x = Conv2D(64, (3,3), activation='relu', padding='same', name='Conv1_1')(input_img)
+    x = Conv2D(64, (3,3), activation='relu', padding='same', name='Conv1_2')(x)
+    x = MaxPooling2D((2,2), name='pool1')(x)
+    
+    x = SeparableConv2D(128, (3,3), activation='relu', padding='same', name='Conv2_1')(x)
+    x = SeparableConv2D(128, (3,3), activation='relu', padding='same', name='Conv2_2')(x)
+    x = MaxPooling2D((2,2), name='pool2')(x)
+    
+    x = SeparableConv2D(256, (3,3), activation='relu', padding='same', name='Conv3_1')(x)
+    x = BatchNormalization(name='bn1')(x)
+    x = SeparableConv2D(256, (3,3), activation='relu', padding='same', name='Conv3_2')(x)
+    x = BatchNormalization(name='bn2')(x)
+    x = SeparableConv2D(256, (3,3), activation='relu', padding='same', name='Conv3_3')(x)
+    x = MaxPooling2D((2,2), name='pool3')(x)
+    
+    x = SeparableConv2D(512, (3,3), activation='relu', padding='same', name='Conv4_1')(x)
+    x = BatchNormalization(name='bn3')(x)
+    x = SeparableConv2D(512, (3,3), activation='relu', padding='same', name='Conv4_2')(x)
+    x = BatchNormalization(name='bn4')(x)
+    x = SeparableConv2D(512, (3,3), activation='relu', padding='same', name='Conv4_3')(x)
+    x = MaxPooling2D((2,2), name='pool4')(x)
+    
+    x = Flatten(name='flatten')(x)
+    x = Dense(1024, activation='relu', name='fc1')(x)
+    x = Dropout(0.7, name='dropout1')(x)
+    x = Dense(512, activation='relu', name='fc2')(x)
+    x = Dropout(0.5, name='dropout2')(x)
+    x = Dense(2, activation='softmax', name='fc3')(x)
+    
+    model = Model(inputs=input_img, outputs=x)
+    return model
 
-from tensorflow.keras.applications import VGG16
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+model =  build_model()
 
-base_dir = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped'
-train_dir = os.path.join(base_dir, 'train')
-validation_dir = os.path.join(base_dir, 'val')
+# opt = RMSprop(lr=0.0001, decay=1e-6)
+opt = Adam(lr=0.0001, decay=1e-5)
+es = EarlyStopping(patience=5)
+chkpt = ModelCheckpoint(filepath='best_model_todate', save_best_only=True, save_weights_only=True)
+model.compile(loss='binary_crossentropy', metrics=['accuracy'],optimizer=opt)
 
-train_positive_dir = os.path.join(train_dir, 'cropped_positive_xrays')
-train_negative_dir = os.path.join(train_dir, 'cropped_negative_xrays')
-validation_positive_dir = os.path.join(validation_dir, 'cropped_positive_xrays')
-validation_negative_dir = os.path.join(validation_dir, 'cropped_negative_xrays')
+batch_size = 16
+nb_epochs = 20
 
-num_positive_tr = len(os.listdir(train_positive_dir))
-num_negative_tr = len(os.listdir(train_negative_dir))
+# Get a train data generator
+train_data_gen = data_gen(data=train_data, batch_size=batch_size)
 
-num_positive_val = len(os.listdir(validation_positive_dir))
-num_negative_val = len(os.listdir(validation_negative_dir))
+# Define the number of training steps
+nb_train_steps = train_data.shape[0]//batch_size
 
-total_train = num_positive_tr + num_negative_tr
-total_val = num_positive_val + num_negative_val
+print("Number of training and validation steps: {} and {}".format(nb_train_steps, len(valid_data)))
 
-print('Training positive images:', num_positive_tr)
-print('Training negative images:', num_negative_tr)
-
-print('Validation positive images:', num_positive_val)
-print('Validation negative images:', num_negative_val)
-
-print("--")
-
-print("Total training images:", total_train)
-print("Total validation images:", total_val)
-
-# Notice we do not include the `top`, or the Dense layers used to classify the 1,000 classes from ImageNet.
-conv_base = VGG16(weights='imagenet',include_top=False, input_shape=(150, 150, 3))
-
-TARGET_SHAPE = 150 
-BATCH_SIZE = 16
-
-# Cache activations for our training and validation data
-datagen = ImageDataGenerator(rescale=1./255)
-
-def extract_features(directory, sample_count):
-    features = np.zeros(shape=(sample_count, 4, 4, 512))
-    labels = np.zeros(shape=(sample_count))
-    generator = datagen.flow_from_directory(
-        directory,
-        target_size=(TARGET_SHAPE, TARGET_SHAPE),
-        batch_size=BATCH_SIZE,
-        class_mode='binary')
-    i = 0
-    for inputs_batch, labels_batch in generator:
-      
-        features_batch = conv_base.predict(inputs_batch)
-        # print(features_batch.shape)
-        # (32, 4, 4, 512)
-        # Think: batch_size, rows, cols, channels
-        
-        features[i * BATCH_SIZE : (i + 1) * BATCH_SIZE] = features_batch
-        labels[i * BATCH_SIZE : (i + 1) * BATCH_SIZE] = labels_batch
-        i += 1
-        if i * BATCH_SIZE >= sample_count:
-            # Note that since generators yield data indefinitely in a loop,
-            # we must `break` after every image has been seen once.
-            break
-    return features, labels
-
-train_features, train_labels = extract_features(train_dir, 2000)
-validation_features, validation_labels = extract_features(validation_dir, 1000)
-
-FLATTENED_SHAPE = 4 * 4 * 512
-
-train_features = np.reshape(train_features, (total_train, FLATTENED_SHAPE))
-validation_features = np.reshape(validation_features, (total_val, FLATTENED_SHAPE))
-
-EPOCHS = 50
-
-model = Sequential()
-model.add(Dense(256, activation='relu', input_dim=FLATTENED_SHAPE))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
-
-model.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['acc'])
-
-history = model.fit(train_features, train_labels,
-                    epochs=EPOCHS,
-                    batch_size=BATCH_SIZE,
-                    validation_data=(validation_features, validation_labels))
+# Fit the model
+history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=nb_train_steps,
+                              validation_data=(valid_data, valid_labels),callbacks=[es, chkpt],
+                              class_weight={0:1.0, 1:0.4})
