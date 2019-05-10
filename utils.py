@@ -2,6 +2,7 @@ import subprocess
 import numpy as np
 import os.path
 import json
+import zipfile
 
 # TODO: end it with the slash
 ORIGINAL_PATH = '/Users/suhyunkim/git/DnntalPrivate/img/mask/'
@@ -34,6 +35,7 @@ arr_difficulty_score = np.array([])
 
 
 def download_zip():
+<<<<<<< HEAD:Model_image_segmentation/utils.py
     run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
         -O ./dnntal.zip")
 
@@ -41,9 +43,17 @@ def download_zip():
     zip_ref = zipfile.ZipFile(local_zip + '.zip', 'r')
 
     zip_ref.extractall(local_zip)
+=======
+    # run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip -O ./dnntal.zip")
+>>>>>>> c9eaff891369e88457e9bf9a30aae140582f68e5:utils.py
 
+    #TODO: fill the location of where zip is downloaded
+    local_zip = ''
+    zip_ref = zipfile.ZipFile(local_zip + '.zip', 'r')
+    zip_ref.extractall(local_zip)
     zip_ref.close()
 
+'''
 def do():
     counter = 0
     with open('data.json') as json_file:
@@ -60,3 +70,6 @@ def do():
                 original_filename = f"{ORIGINAL_PATH}{filename}"
                 run_command(f"wget {retro_link} -O {retro_filename}")
                 run_command(f"wget {original_link} -O {original_filename}")
+'''
+
+download_zip()

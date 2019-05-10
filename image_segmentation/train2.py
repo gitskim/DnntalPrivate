@@ -26,8 +26,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from skimage.transform import resize
 
-PATH_HOME = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
-
+PATH_TRAIN = '/home/ek2993/DnntalPrivate/dnntal/dentist_AI'
 
 # --- get data ---
 def run_command(command, logfile=None, print_output=True, return_output=True):
@@ -53,10 +52,10 @@ border = 5
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
-    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/original', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/train/original', '*.jpg'))
 filelist_original = sorted(filelist_original)
 filelist_masks = glob.glob(
-    os.path.join('/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI/train/masks', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
 resolution = 2.0
@@ -77,14 +76,12 @@ for path_mask in filelist_original:
 
 train_ids = filelist_original[2]
 
-train_path = '/home/ek2993/dnntal/DnntalPrivate/dnntal/dentist_AI'
 # Get and resize train images and masks
 X = np.zeros((len(filelist_original), im_height, im_width, im_chan), dtype=np.float32)
 y = np.zeros((len(filelist_original), im_height, im_width, 1), dtype=np.float32)
 print('suhyun before for loop')
 sys.stdout.flush()
 for i, filelist in enumerate(filelist_original):
-    path = train_path
     print('suhyun id_')
     sys.stdout.flush()
     # Load X
@@ -240,6 +237,8 @@ def unet(opt, input_size, lossfxn):
     model.compile(optimizer=opt, loss=lossfxn, metrics=[dsc, tp, tn])
     return model
 
+
+'''
 # explanation: https://software.intel.com/en-us/articles/hands-on-ai-part-14-image-data-preprocessing-and-augmentation
 datagen = ImageDataGenerator(
     # to normalize the dataset such that the mean value of each data sample would be equal to 0
@@ -259,6 +258,7 @@ datagen.fit(X)
 # fits the model on batches with real-time data augmentation:
 model.fit_generator(datagen.flow(X, y, batch_size=32),
                     steps_per_epoch=len(x_train) / 32, epochs=epochs)
+'''
 
 img_row = 128
 img_col = 128
