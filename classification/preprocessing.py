@@ -54,10 +54,6 @@ def clahe(path):
 
 for path_xrays in filelist_xrays:
     clahe(path_xrays)
-# for path_mask in filelist_masks:
-#     clahe(path_mask)
-
-#Cropping the images
 
 im_width = 256
 im_height = 256
@@ -79,14 +75,6 @@ def crop(image_path, coords, saved_location, isMask=False):
 def ispositive(path):
     img=load_img(path, grayscale=True)
     return img.getbbox()!=None
-    # arr=img_to_array(img)
-  
-    # np_array = np.asarray(arr)
-    # copy = np.copy(np_array)
-    # # creating a all white array 
-    # all_black = copy.fill(0)
-    # print(np.array_equal(np_array, all_black))
-    # return np.array_equal(np_array, all_black)
 
 #cropping the original panoramics and the masks, classifying the masks to create positive and negative folders of cropped_panoramic
 for i, path_xray in enumerate(filelist_xrays):
