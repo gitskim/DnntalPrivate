@@ -44,8 +44,6 @@ filelist_masks = glob.glob(
     os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
-resolution = 2.0
-
 print("... starint clahe ...")
 for path_original in filelist_original:
     preprocessing.clahe(path_original)
