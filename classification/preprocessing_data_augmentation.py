@@ -31,7 +31,7 @@ import cv2
 from keras import backend as K
 
 # Define path to the data directory
-data_dir = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped'
+data_dir = '/home/ek2993/DnntalPrivate/cropped'
 
 # Path to train directory
 train_dir = os.path.join(data_dir, 'train')
