@@ -10,7 +10,7 @@ def clahe(path):
 
 
 def center_crop(filelist_original):
-    im = Image.open(img)
+    im = Image.open(filelist_original)
     width, height = im.size
 
     print(width + " " + height)
@@ -25,6 +25,6 @@ def center_crop(filelist_original):
     crop_rectangle = (left, top, right, bottom)
 
     cropped_im = im.crop(crop_rectangle)
-    plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
+    # plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
     width, height = cropped_im.size
-    # print(f"width: {width}, height: {height}")
+    print("after cropping: " + width + " " + height)
