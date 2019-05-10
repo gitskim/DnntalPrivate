@@ -48,10 +48,10 @@ resolution = 2.0
 
 print("... starint clahe ...")
 for path_original in filelist_original:
-    clahe(path_original)
+    preprocessing.clahe(path_original)
 for path_mask in filelist_original:
     # question: why are you clahe'ing path_mask
-    clahe(path_mask)
+    preprocessing.clahe(path_mask)
 
 train_ids = filelist_original[2]
 
@@ -115,7 +115,7 @@ epochnum = 100
 batchnum = 16
 input_size = (img_row, img_col, img_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
-model = unet(sgd, input_size, tversky_loss)
+model = model.unet(sgd, input_size, loss.tversky_loss)
 hist = model.fit(X, y, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
                  verbose=True)
