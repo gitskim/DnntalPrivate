@@ -28,3 +28,4 @@ def center_crop(filelist_original):
     # plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
     width, height = cropped_im.size
     print("after cropping: " + str(width) + str(height))
+    return cropped_im

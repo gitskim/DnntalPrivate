@@ -44,14 +44,14 @@ filelist_masks = glob.glob(
 filelist_masks = sorted(filelist_masks)
 
 print("... starint clahe ...")
-for path_original in filelist_original:
+for i, path_original in enumerate(filelist_original):
     prep.clahe(path_original)
     print(path_original)
-    prep.center_crop(path_original)
-for path_mask in filelist_original:
+    filelist_original[i] = prep.center_crop(path_original)
+for path_mask in enumerate(filelist_masks):
     # question: why are you clahe'ing path_mask
     prep.clahe(path_mask)
-    prep.center_crop(path_original)
+    filelist_masks[i] = prep.center_crop(path_original)
 
 train_ids = filelist_original[2]
 
