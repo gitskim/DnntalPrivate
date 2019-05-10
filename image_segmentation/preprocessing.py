@@ -10,22 +10,21 @@ def clahe(path):
 
 
 def center_crop(filelist_original):
-    for i, img in enumerate(filelist_original):
-        im = Image.open(img)
-        width, height = im.size
+    im = Image.open(img)
+    width, height = im.size
 
-        print(width + " " + height)
+    print(width + " " + height)
 
-        w_after_crop = 1300
-        h_after_crop = 590
+    w_after_crop = 1300
+    h_after_crop = 590
 
-        left = (width - w_after_crop) // 2
-        top = (height - h_after_crop) // 2
-        bottom = top + h_after_crop
-        right = left + w_after_crop
-        crop_rectangle = (left, top, right, bottom)
+    left = (width - w_after_crop) // 2
+    top = (height - h_after_crop) // 2
+    bottom = top + h_after_crop
+    right = left + w_after_crop
+    crop_rectangle = (left, top, right, bottom)
 
-        cropped_im = im.crop(crop_rectangle)
-        plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
-        width, height = cropped_im.size
-        # print(f"width: {width}, height: {height}")
+    cropped_im = im.crop(crop_rectangle)
+    plt.imshow(cropped_im, cmap='gray', vmin=0, vmax=255)
+    width, height = cropped_im.size
+    # print(f"width: {width}, height: {height}")
