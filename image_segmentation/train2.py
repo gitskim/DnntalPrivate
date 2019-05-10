@@ -10,16 +10,8 @@ import sys
 import tensorflow as tf
 import keras as keras
 from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras.layers import Input
-from tensorflow.python.keras.layers.core import Lambda, RepeatVector, Reshape
-from tensorflow.python.keras.layers.convolutional import Conv2D, Conv2DTranspose
-from tensorflow.python.keras.layers.pooling import MaxPooling2D
-from tensorflow.python.keras.layers.merge import concatenate
-from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.python.keras import backend as K
 from sklearn.model_selection import train_test_split
-
-from tensorflow.python.keras.models import Model
 from tensorflow.python.keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
 from tensorflow.python.keras.layers import Activation, add, multiply, Lambda
 from tensorflow.python.keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
