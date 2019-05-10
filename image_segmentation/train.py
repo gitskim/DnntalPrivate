@@ -118,7 +118,7 @@ hist = model.fit(X, y, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
                  verbose=True)
 
-# results = model.fit({'img': X_train, 'feat': X_feat_train}, y_train, batch_size=16, epochs=50, callbacks=callbacks)
+model.save_weights('5-9-9p-unet-tverskyloss.h5')
 
 # Function to distort image
 # https://www.kaggle.com/bguberfain/elastic-transform-for-data-augmentation
@@ -154,10 +154,11 @@ def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     indices = np.reshape(y + dy, (-1, 1)), np.reshape(x + dx, (-1, 1)), np.reshape(z, (-1, 1))
 
     return map_coordinates(image, indices, order=1, mode='reflect').reshape(shape)
-
+'''
 # Apply transformation on image
 im_merge_t = elastic_transform(im_merge, im_merge.shape[1] * 2, im_merge.shape[1] * 0.08, im_merge.shape[1] * 0.08)
 
 # Split image and mask
 im_t = im_merge_t[...,0]
 im_mask_t = im_merge_t[...,1]
+'''
