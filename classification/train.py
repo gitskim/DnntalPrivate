@@ -30,6 +30,8 @@ from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
 
+import preprocessing_data_augmentation as prep
+
 def build_model():
     input_img = Input(shape=(224,224,3), name='ImageInput')
     x = Conv2D(64, (3,3), activation='relu', padding='same', name='Conv1_1')(input_img)
@@ -76,7 +78,7 @@ batch_size = 16
 nb_epochs = 20
 
 # Get a train data generator
-train_data_gen = data_gen(data=train_data, batch_size=batch_size)
+train_data_gen = prep.data_gen(data=train_data, batch_size=batch_size)
 
 # Define the number of training steps
 nb_train_steps = train_data.shape[0]//batch_size
