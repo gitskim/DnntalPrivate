@@ -24,7 +24,6 @@ import loss
 
 kinit = 'glorot_normal'
 epsilon = 1e-5
-smooth = 1
 
 def UnetConv2D(input, outdim, is_batchnorm, name):
     x = Conv2D(outdim, (3, 3), strides=(1, 1), kernel_initializer=kinit, padding="same", name=name + '_1')(input)

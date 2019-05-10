@@ -16,6 +16,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from skimage.transform import resize
 
+smooth = 1
+
 def tversky(y_true, y_pred):
     y_true_pos = K.flatten(y_true)
     y_pred_pos = K.flatten(y_pred)
