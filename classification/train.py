@@ -12,18 +12,18 @@ from PIL import Image
 from pathlib import Path
 from skimage.io import imread
 from skimage.transform import resize
-from keras.models import Sequential
-from keras.models import Model
-from keras.applications.vgg16 import VGG16, preprocess_input
-from keras.preprocessing.image import ImageDataGenerator,load_img, img_to_array
-from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
-from keras.layers import GlobalMaxPooling2D
-from keras.layers.normalization import BatchNormalization
-from keras.layers.merge import Concatenate
-from keras.models import Model
-from keras.optimizers import Adam, SGD, RMSprop
-from keras.callbacks import ModelCheckpoint, Callback, EarlyStopping
-from keras.utils import to_categorical
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.applications.vgg16 import VGG16, preprocess_input
+from tensorflow.python.keras.preprocessing.image import ImageDataGenerator,load_img, img_to_array
+from tensorflow.python.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
+from tensorflow.python.keras.layers import GlobalMaxPooling2D
+from tensorflow.python.keras.layers.normalization import BatchNormalization
+from tensorflow.python.keras.layers.merge import Concatenate
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.optimizers import Adam, SGD, RMSprop
+from tensorflow.python.keras.callbacks import ModelCheckpoint, Callback, EarlyStopping
+from tensorflow.python.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix
