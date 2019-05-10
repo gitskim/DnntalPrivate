@@ -13,103 +13,10 @@ from keras import backend as K
 from functools import partial
 from itertools import product
 
-# Custom IoU metric
-def mean_iou(y_true, y_pred):
-    prec = []
-    for t in np.arange(0.5, 1.0, 0.05):
-        y_pred_ = tf.to_int32(y_pred > t)
-        score, up_opt = tf.metrics.mean_iou(y_true, y_pred_, 2)
-        K.get_session().run(tf.local_variables_initializer())
-        with tf.control_dependencies([up_opt]):
-            score = tf.identity(score)
-        prec.append(score)
-    return K.mean(K.stack(prec), axis=0)
 
-# Custom loss function
-#dice_coef --> 
-def dice_coef(y_true, y_pred):
-    smooth = 1.
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    return (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-
-def bce_dice_loss(y_true, y_pred):
-    return keras.losses.binary_crossentropy(y_true, y_pred) - dice_coef(y_true, y_pred)
-
-#tversky -->
-def tversky(y_true, y_pred):
-    y_true_pos = K.flatten(y_true)
-    y_pred_pos = K.flatten(y_pred)
-    true_pos = K.sum(y_true_pos * y_pred_pos)
-    false_neg = K.sum(y_true_pos * (1 - y_pred_pos))
-    false_pos = K.sum((1 - y_true_pos) * y_pred_pos)
-    alpha = 0.7
-    return (true_pos + smooth) / (true_pos + alpha * false_neg + (1 - alpha) * false_pos + smooth)
-
-
-def tversky_loss(y_true, y_pred):
-    return 1 - tversky(y_true, y_pred)
-
-
-def focal_tversky(y_true, y_pred):
-    pt_1 = tversky(y_true, y_pred)
-    gamma = 0.75
-    return K.pow((1 - pt_1), gamma)
-
-
-# First model of U-Net
-
-input_img = Input((im_height, im_width, im_chan), name='img')
-
-c1 = Conv2D(8, (3, 3), activation='relu', padding='same') (input_img)
-c1 = Conv2D(8, (3, 3), activation='relu', padding='same') (c1)
-p1 = MaxPooling2D((2, 2)) (c1)
-
-c2 = Conv2D(16, (3, 3), activation='relu', padding='same') (p1)
-c2 = Conv2D(16, (3, 3), activation='relu', padding='same') (c2)
-p2 = MaxPooling2D((2, 2)) (c2)
-
-c3 = Conv2D(32, (3, 3), activation='relu', padding='same') (p2)
-c3 = Conv2D(32, (3, 3), activation='relu', padding='same') (c3)
-p3 = MaxPooling2D((2, 2)) (c3)
-
-c4 = Conv2D(64, (3, 3), activation='relu', padding='same') (p3)
-c4 = Conv2D(64, (3, 3), activation='relu', padding='same') (c4)
-p4 = MaxPooling2D(pool_size=(2, 2)) (c4)
-
-
-c5 = Conv2D(128, (3, 3), activation='relu', padding='same') (p4)
-c5 = Conv2D(128, (3, 3), activation='relu', padding='same') (c5)
-
-u6 = Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='same') (c5)
-#Skip connection
-u6 = concatenate([u6, c4])
-c6 = Conv2D(64, (3, 3), activation='relu', padding='same') (u6)
-c6 = Conv2D(64, (3, 3), activation='relu', padding='same') (c6)
-
-u7 = Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='same') (c6)
-u7 = concatenate([u7, c3])
-c7 = Conv2D(32, (3, 3), activation='relu', padding='same') (u7)
-c7 = Conv2D(32, (3, 3), activation='relu', padding='same') (c7)
-
-u8 = Conv2DTranspose(16, (2, 2), strides=(2, 2), padding='same') (c7)
-u8 = concatenate([u8, c2])
-c8 = Conv2D(16, (3, 3), activation='relu', padding='same') (u8)
-c8 = Conv2D(16, (3, 3), activation='relu', padding='same') (c8)
-
-u9 = Conv2DTranspose(8, (2, 2), strides=(2, 2), padding='same') (c8)
-u9 = concatenate([u9, c1], axis=3)
-c9 = Conv2D(8, (3, 3), activation='relu', padding='same') (u9)
-c9 = Conv2D(8, (3, 3), activation='relu', padding='same') (c9)
-
-outputs = Conv2D(1, (1, 1), activation='sigmoid') (c9)
-
-model = Model(inputs=[input_img], outputs=[outputs])
-model.compile(optimizer='adam', loss=bce_dice_loss , metrics=[mean_iou])
-model.summary()
-
-#Model 2 possible of U-Net
+kinit = 'glorot_normal'
+epsilon = 1e-5
+smooth = 1
 
 def UnetConv2D(input, outdim, is_batchnorm, name):
     x = Conv2D(outdim, (3, 3), strides=(1, 1), kernel_initializer=kinit, padding="same", name=name + '_1')(input)
