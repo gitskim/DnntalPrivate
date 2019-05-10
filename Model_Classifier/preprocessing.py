@@ -1,5 +1,5 @@
 #import dependencies
-%matplotlib inline
+#%matplotlib inline
 import os
 import numpy as np
 import imageio
@@ -13,20 +13,20 @@ import cv2
 
 # --- get data ---
 
-!wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
-    -O /tmp/dentist_AI.zip
+# !wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip\
+#     -O /tmp/dentist_AI.zip
 
-local_zip = '/tmp/dentist_AI.zip'
-zip_ref = zipfile.ZipFile(local_zip, 'r')
+# local_zip = '/tmp/dentist_AI.zip'
+# zip_ref = zipfile.ZipFile(local_zip, 'r')
 
-zip_ref.extractall('/tmp/dentist_AI')
+# zip_ref.extractall('/tmp/dentist_AI')
 
-zip_ref.close()
+# zip_ref.close()
 
 
 #main path
 
-train_path = '/tmp/dentist_AI/dentist_AI'
+#train_path = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/original/'
 
 
 #For the preprocessing
@@ -37,9 +37,9 @@ from skimage.transform import resize
 from PIL import Image
 
 import glob
-filelist_original = glob.glob(os.path.join('/tmp/dentist_AI/dentist_AI/train/original/', '*.jpg'))
-filelist_original=sorted(filelist_original)
-filelist_masks = glob.glob(os.path.join('/tmp/dentist_AI/dentist_AI/train/masks/', '*.jpg'))
+filelist_xrays = glob.glob(os.path.join('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/original/xrays/', '*.jpg'))
+filelist_xrays=sorted(filelist_xrays)
+filelist_masks = glob.glob(os.path.join('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/original/masks/', '*.jpg'))
 filelist_masks=sorted(filelist_masks)
 
 
@@ -52,15 +52,15 @@ def clahe(path):
   img=cv2.imread(path, 0)
   cv2.imwrite(path, clahe.apply(img))
 
-for path_original in filelist_original:
-  clahe(path_original)
-for path_mask in filelist_original:
+for path_xray in filelist_xrays:
+  clahe(path_xray)
+for path_mask in filelist_masks:
   clahe(path_mask)
 
 #Cropping the images
 
-im_width = 128
-im_height = 128
+im_width = 256
+im_height = 256
 border = 5
 im_chan = 2 # Number of channels: first is original and second cumsum(axis=0)
 
@@ -91,37 +91,47 @@ def ispositive(path):
   return np.array_equal(np_array, all_black)
 
 #cropping the original panoramics and the masks, classifying the masks to create positive and negative folders of cropped_panoramic
-for i, path_original in enumerate(filelist_original):
+for i, path_xray in enumerate(filelist_xrays):
   
-  path_masks=filelist_masks[i]
-  im = Image.open(path_original)
+  path_mask=filelist_masks[i]
+  im = Image.open(path_xray)
   width, height = im.size
-  
-  for k in range(50):
+
+#Center and finding a white pixel
+  mask_array=np.array(Image.open(path_mask))/255
+  x=np.where(mask_array!=0)[0][0]
+  y=np.where(mask_array!=0)[1][0]
+
+  if i<50:
+    for k in range(50):
     
-    
-    x=rd.randint(0,width-im_width)
-    y=rd.randint(0,height-im_height)
-    crop(path_original, (x, y, x+im_width, y+im_height), '/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg')
-    crop(path_masks, (x, y, x+im_width, y+im_height), '/tmp/dentist_AI/dentist_AI/cropped_train/cropped_masks/file'+str(i)+'_'+str(k)+'.jpg')
-    
-    if ispositive('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_masks/file'+str(i)+'_'+str(k)+'.jpg'):
-      Image.open('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg').save('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original_positive/file'+str(i)+'_'+str(k)+'.jpg')
-    else:
-      Image.open('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg').save('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original_negative/file'+str(i)+'_'+str(k)+'.jpg')
+      # x=rd.randint(0,width-im_width)#Random cropping
+      # y=rd.randint(0,height-im_height)#Random cropping
+      
+      #x=x+rd.randint(-128,-1)#Center in a white pixel
+      #y=y+rd.randint(-128,-1)#Center in a white pixel
+      crop(path_xray, (x, y, x+im_width, y+im_height), '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/train/file'+str(i)+'_'+str(k)+'.jpg')
+      crop(path_mask, (x, y, x+im_width, y+im_height), '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg')
+      # if ispositive('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg'):
+      #   Image.open('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg').save('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped/train/cropped_positive_xrays/file'+str(i)+'_'+str(k)+'.jpg')
+      # else:
+      #   Image.open('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg').save('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped/train/cropped_negative_xrays/file'+str(i)+'_'+str(k)+'.jpg')
     break
 
 
-  for k in range(50):
+  if i>=50:
+    for k in range(50):
     
-    
-    x=rd.randint(0,width-im_width)
-    y=rd.randint(0,height-im_height)
-    crop(path_original, (x, y, x+im_width, y+im_height), '/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg')
-    crop(path_masks, (x, y, x+im_width, y+im_height), '/tmp/dentist_AI/dentist_AI/cropped_train/cropped_masks/file'+str(i)+'_'+str(k)+'.jpg')
-    
-    if ispositive('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_masks/file'+str(i)+'_'+str(k)+'.jpg'):
-      Image.open('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg').save('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original_positive/file'+str(i)+'_'+str(k)+'.jpg')
-    else:
-      Image.open('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original/file'+str(i)+'_'+str(k)+'.jpg').save('/tmp/dentist_AI/dentist_AI/cropped_train/cropped_original_negative/file'+str(i)+'_'+str(k)+'.jpg')
-    break
+      # x=rd.randint(0,width-im_width)#Random cropping
+      # y=rd.randint(0,height-im_height)#Random cropping
+
+      x=x+rd.randint(-128,-1)#Center in a white pixel
+      y=y+rd.randint(-128,-1)#Center in a white pixel
+      print(path_original, path_masks)
+      crop(path_original, (x, y, x+im_width, y+im_height), '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/train/file'+str(i)+'_'+str(k)+'.jpg')
+      crop(path_masks, (x, y, x+im_width, y+im_height), '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg')
+      
+      if ispositive('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg'):
+        Image.open('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg').save('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped/val/cropped_positive_xrays/file'+str(i)+'_'+str(k)+'.jpg')
+      else:
+        Image.open('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped0/masks/file'+str(i)+'_'+str(k)+'.jpg').save('/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped/val/cropped_negative_xrays/file'+str(i)+'_'+str(k)+'.jpg')
