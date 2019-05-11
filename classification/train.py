@@ -23,6 +23,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import cv2
 from keras import backend as K
+import json
 
 
 ##### Defining the path of images #####
@@ -220,11 +221,15 @@ opt = Adam(lr=0.0001, decay=1e-5) #or RMSprop(lr=0.0001, decay=1e-6)
 
 #Early stopping
 es = EarlyStopping(patience=5)
+<<<<<<< HEAD
 
 #Model Checkpoint
 chkpt = ModelCheckpoint(filepath='best_model_todate', save_best_only=True, save_weights_only=True)
 
 #Compile the model
+=======
+chkpt = ModelCheckpoint(filepath='best_model_todate_5_10_8p', save_best_only=True, save_weights_only=True)
+>>>>>>> 978d889a7a727269bd837711000bc171d0e2fed0
 model.compile(loss='binary_crossentropy', metrics=['accuracy'],optimizer=opt)
 
 
@@ -243,4 +248,19 @@ print("Number of training and validation steps: {} and {}".format(nb_train_steps
 # Fit the model
 history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=nb_train_steps,
                               validation_data=(valid_data, valid_labels),callbacks=[es, chkpt],
+<<<<<<< HEAD
                               class_weight={0:1.0, 1:2.0})
+=======
+                              class_weight={0:1.0, 1:0.4})
+
+# serialize model to JSON
+model_json = model.to_json()
+with open("model_5_10_8p.json", "w") as json_file:
+        json_file.write(model_json)
+
+# serialize weights to HDF5
+model.save_weights('weights_5_10_8p.h')
+print(history.history)
+with open('history_5_10_8p.json', 'w') as f:
+        json.dump(float(history.history), f)
+>>>>>>> 978d889a7a727269bd837711000bc171d0e2fed0

@@ -35,7 +35,7 @@ arr_difficulty_score = np.array([])
 
 
 def download_zip():
-    run_command("wget https://storage.googleapis.com/dentist_ai/dentist_AI.zip -O ./dnntal.zip")
+    run_command("wget https://storage.googleapis.com/dentist_ai/cropped.zip -O ./dnntal.zip")
 
     #TODO: fill the location of where zip is downloaded
     local_zip = '/home/ek2993/DnntalPrivate/'

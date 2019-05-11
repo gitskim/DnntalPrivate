@@ -47,13 +47,10 @@ print("... starint clahe ...")
 for i, path_original in enumerate(filelist_original):
     prep.clahe(path_original)
     print(path_original)
-    filelist_original[i] = prep.center_crop(path_original)
-for path_mask in enumerate(filelist_masks):
-    # question: why are you clahe'ing path_mask
-    prep.clahe(path_mask)
-    filelist_masks[i] = prep.center_crop(path_original)
+    #filelist_original[i] = prep.center_crop(path_original)
+#for path_mask in enumerate(filelist_masks):
+    #filelist_masks[i] = prep.center_crop(path_original)
 
-train_ids = filelist_original[2]
 
 # Get and resize train images and masks
 X = np.zeros((len(filelist_original), im_height, im_width, im_chan), dtype=np.float32)
