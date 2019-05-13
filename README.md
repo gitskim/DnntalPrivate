@@ -1,3 +1,6 @@
+# REFERENCE of code:
+combining the results in multipath: https://github.com/Attila94/refinenet-keras/blob/master/model/refinenet.py
+
 # Dnntal 1
 ## 5/5/19 1:28A
 Epoch 71/100
