@@ -21,28 +21,22 @@ class MyModel(Model):
         super(MyModel, self).__init__()
         self.conv1 = Conv2D(32, 3, activation='relu')
         self.flatten = Flatten()
-        self.d1 = Dense(128, activation='relu')
         self.d2 = Dense(10, activation='softmax')
         
         self.two = Conv2D(32, 3, activation='relu')
         self.thr = Flatten()
-        self.fou = Dense(128, activation='relu')
         self.fiv = Dense(10, activation='softmax')
-        
+         
+        self.add = tf.keras.layers.Add()
 
     def call(self, x, y):
         x = self.conv1(x)
         x = self.flatten(x)
-        x = self.d1(x)
-        x = self.d2(x)
 
         y = self.two(y)
         y = self.thr(y)
-        y = self.fou(y)
-        y = self.fiv(y)
-    
-        added = tf.keras.layers.Add()([x, y])
-        return tf.keras.layers.Dense(10, activation='softmax')(x)
+        add = self.add([x, y])
+        return self.fiv(add)
 
 model = MyModel()
 
