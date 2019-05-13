@@ -1,10 +1,15 @@
 import os
 import glob
+import h5py
+import shutil
 import imgaug as aug
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import imgaug.augmenters as iaa
+from os import listdir, makedirs, getcwd, remove
+from os.path import isfile, join, abspath, exists, isdir, expanduser
 from PIL import Image
+from pathlib import Path
 from skimage.io import imread
 from skimage.transform import resize
 from tensorflow.python.keras.models import Sequential
@@ -21,16 +26,13 @@ from tensorflow.python.keras.callbacks import ModelCheckpoint, Callback, EarlySt
 from tensorflow.python.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
 import json
 
-
-##### Defining the path of images #####
-
-
 # Define path to the data directory
-data_dir = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped'
+data_dir = '/home/ek2993/DnntalPrivate/cropped'
 
 # Path to train directory
 train_dir = os.path.join(data_dir, 'train')
@@ -71,16 +73,11 @@ train_data = pd.DataFrame(train_data, columns=['image', 'label'], index=None)
 # Shuffle the data
 train_data = train_data.sample(frac=1.).reset_index(drop=True)
 
-
-
-#### Preprocessing of the validation dataset ####
-
 # We will convert into a image with 3 channels.
 # We will normalize the pixel values and resizing all the images to 224x224
 
 # Negatives cases
-
-for img in negatives_cases_val:
+for img in negatives_cases_train:
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
@@ -92,8 +89,7 @@ for img in negatives_cases_val:
     valid_labels.append(label)
 
 # Positives cases
-
-for img in positives_cases_val:
+for img in positives_cases_train:
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
@@ -111,19 +107,11 @@ valid_labels = np.array(valid_labels)
 print("Total number of validation examples: ", valid_data.shape)
 print("Total number of labels:", valid_labels.shape)
 
-
-
-
-###### Data Augmentation ######
-
 # Augmentation sequence
 seq = iaa.OneOf([
     iaa.Fliplr(),  # horizontal flips
     iaa.Affine(rotate=20),  # roatation
     iaa.Multiply((1.2, 1.5))])  # random brightness
-
-
-
 
 
 def data_gen(data, batch_size):
@@ -151,7 +139,6 @@ def data_gen(data, batch_size):
 
             # one hot encoding
             encoded_label = to_categorical(label, num_classes=2)
-
             # read the image and resize
             img = cv2.imread(str(img_name))
             img = cv2.resize(img, (224, 224))
@@ -162,12 +149,32 @@ def data_gen(data, batch_size):
 
             # cv2 reads in BGR mode by default
             orig_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
             # normalize the image pixels
             orig_img = img.astype(np.float32) / 255.
 
             batch_data[count] = orig_img
             batch_labels[count] = encoded_label
+
+            # generating more samples of the undersampled class
+            if label == 0 and count < batch_size - 2:
+                aug_img1 = seq.augment_image(img)
+                aug_img2 = seq.augment_image(img)
+                aug_img1 = cv2.cvtColor(aug_img1, cv2.COLOR_BGR2RGB)
+                aug_img2 = cv2.cvtColor(aug_img2, cv2.COLOR_BGR2RGB)
+                aug_img1 = aug_img1.astype(np.float32) / 255.
+                aug_img2 = aug_img2.astype(np.float32) / 255.
+
+                batch_data[count + 1] = aug_img1
+                batch_labels[count + 1] = encoded_label
+                batch_data[count + 2] = aug_img2
+                batch_labels[count + 2] = encoded_label
+                count += 2
+
+            else:
+                count += 1
+
+            if count == batch_size - 1:
+                break
 
         i += 1
         yield batch_data, batch_labels
@@ -175,9 +182,6 @@ def data_gen(data, batch_size):
         if i >= steps:
             i = 0
 
-
-
-##### Building the model ######
 
 def build_model():
     input_img = Input(shape=(224,224,3), name='ImageInput')
@@ -213,27 +217,14 @@ def build_model():
     model = Model(inputs=input_img, outputs=x)
     return model
 
-model =  build_model()   
+model =  build_model()
 
-
-#Optimizer
-opt = Adam(lr=0.0001, decay=1e-5) #or RMSprop(lr=0.0001, decay=1e-6)
-
-#Early stopping
+# opt = RMSprop(lr=0.0001, decay=1e-6)
+opt = Adam(lr=0.0001, decay=1e-5)
 es = EarlyStopping(patience=5)
-<<<<<<< HEAD
-
-#Model Checkpoint
-chkpt = ModelCheckpoint(filepath='best_model_todate', save_best_only=True, save_weights_only=True)
-
-#Compile the model
-=======
-chkpt = ModelCheckpoint(filepath='best_model_todate_5_10_8p', save_best_only=True, save_weights_only=True)
->>>>>>> 978d889a7a727269bd837711000bc171d0e2fed0
+chkpt = ModelCheckpoint(filepath='best_model_todate_5_13_7p', save_best_only=True, save_weights_only=True)
 model.compile(loss='binary_crossentropy', metrics=['accuracy'],optimizer=opt)
 
-
-#Hyperparameters
 batch_size = 16
 nb_epochs = 20
 
@@ -248,9 +239,6 @@ print("Number of training and validation steps: {} and {}".format(nb_train_steps
 # Fit the model
 history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=nb_train_steps,
                               validation_data=(valid_data, valid_labels),callbacks=[es, chkpt],
-<<<<<<< HEAD
-                              class_weight={0:1.0, 1:2.0})
-=======
                               class_weight={0:1.0, 1:0.4})
 
 # serialize model to JSON
@@ -259,8 +247,7 @@ with open("model_5_10_8p.json", "w") as json_file:
         json_file.write(model_json)
 
 # serialize weights to HDF5
-model.save_weights('weights_5_10_8p.h')
+model.save_weights('weights_5_13_7p.h')
 print(history.history)
-with open('history_5_10_8p.json', 'w') as f:
+with open('history_5_13_7p.json', 'w') as f:
         json.dump(float(history.history), f)
->>>>>>> 978d889a7a727269bd837711000bc171d0e2fed0
