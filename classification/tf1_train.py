@@ -222,17 +222,19 @@ model =  build_model()
 # opt = RMSprop(lr=0.0001, decay=1e-6)
 opt = Adam(lr=0.0001, decay=1e-5)
 es = EarlyStopping(patience=5)
-chkpt = ModelCheckpoint(filepath='best_model_todate_5_13_7p', save_best_only=True, save_weights_only=True)
+chkpt = ModelCheckpoint(filepath='best_model_todate_5_13_7p.h', save_best_only=True, save_weights_only=True)
 model.compile(loss='binary_crossentropy', metrics=['accuracy'],optimizer=opt)
 
 batch_size = 16
 nb_epochs = 20
+#nb_epochs = 1
 
 # Get a train data generator
 train_data_gen = data_gen(data=train_data, batch_size=batch_size)
 
 # Define the number of training steps
 nb_train_steps = train_data.shape[0]//batch_size
+# nb_train_steps = 1
 
 print("Number of training and validation steps: {} and {}".format(nb_train_steps, len(valid_data)))
 
@@ -242,12 +244,7 @@ history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=
                               class_weight={0:1.0, 1:0.4})
 
 # serialize model to JSON
-model_json = model.to_json()
-with open("model_5_10_8p.json", "w") as json_file:
-        json_file.write(model_json)
+model.save('5_13_23p.h5')
 
 # serialize weights to HDF5
-model.save_weights('weights_5_13_7p.h')
 print(history.history)
-with open('history_5_13_7p.json', 'w') as f:
-        json.dump(float(history.history), f)
