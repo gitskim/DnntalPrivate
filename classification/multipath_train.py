@@ -206,9 +206,9 @@ class MyModel(Model):
         add = self.add([x, y])
         return self.fiv(add)
 
-model = MyModel()
+# model = MyModel()
 
-''' 
+ 
 def build_model():
     input_img = Input(shape=(224, 224, 3), name='ImageInput')
     x = Conv2D(64, (3, 3), activation='relu', padding='same', name='Conv1_1')(input_img)
@@ -242,7 +242,9 @@ def build_model():
 
     model = Model(inputs=input_img, outputs=x)
     return model
-'''
+
+
+model = build_model()
 
 # opt = RMSprop(lr=0.0001, decay=1e-6)
 opt = Adam(lr=0.0001, decay=1e-5)
