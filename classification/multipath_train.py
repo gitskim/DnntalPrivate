@@ -30,6 +30,7 @@ from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
 import json
+import tensorflow as tf
 
 # Define path to the data directory
 data_dir = '/home/ek2993/DnntalPrivate/cropped'
