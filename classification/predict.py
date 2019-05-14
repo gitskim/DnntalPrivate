@@ -66,12 +66,20 @@ positive_valid_labels = []
 negative_valid_labels = []
 
 # Go through all the negatives cases. The label for these cases will be 0
+c = 0
 for img in negatives_cases_train:
-    train_data.append((img, 0))
+    c += 1
+    train_data.append((img))
+    if c == 1:
+        break
 
 # Go through all the positives cases. The label for these cases will be 1
+count = 0
 for img in positives_cases_train:
-    train_data.append((img, 1))
+    count += 1
+    train_data.append((img))
+    if count == 1:
+        break
 
 # Get a pandas dataframe from the data we have in our list
 train_data = pd.DataFrame(train_data, columns=['image', 'label'], index=None)
@@ -88,8 +96,7 @@ for img in negatives_cases_train:
     negcount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
-    if img.shape[2] == 1:
-        img = np.dstack([img, img, img])
+    img = np.dstack([img, img, img])
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype(np.float32) / 255.
     label = to_categorical(0, num_classes=2)
@@ -104,8 +111,7 @@ for img in positives_cases_train:
     poscount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
-    if img.shape[2] == 1:
-        img = np.dstack([img, img, img])
+    img = np.dstack([img, img, img])
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype(np.float32) / 255.
     label = to_categorical(1, num_classes=2)
