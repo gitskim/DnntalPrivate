@@ -33,7 +33,6 @@ import preprocessing as prep
 # Preprocessing
 im_width = 128
 im_height = 128
-border = 5
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 PATH_TRAIN = 'train/original/*.jpg'
@@ -42,11 +41,6 @@ PATH_TRAIN2 = 'train/masks/*.jpg'
 filelist_masks = glob.glob(PATH_TRAIN2)
 filelist_masks = sorted(filelist_masks)
 
-# filelist_original = glob.glob(
-#     os.path.join(PATH_TRAIN + 'train/original', '*.jpg'))
-# filelist_original = sorted(filelist_original)
-# filelist_masks = glob.glob(
-#     os.path.join(PATH_TRAIN + 'train/masks', '*.jpg'))
 
 
 print("... starint clahe ...")
@@ -62,7 +56,6 @@ for path_mask in filelist_original:
     prep.center_crop(path_original)
 
 train_ids = filelist_original[2]
-
 
 
 # Get and resize train images and masks
@@ -87,21 +80,11 @@ for i, filelist in enumerate(filelist_original):
     X[i] = x_img / 255
     y[i] = mask/255
 
+
 # Build U-Net model
-TARGET_SHAPE = 128
-im_width = 128
-im_height = 128
-border = 5
-BATCH_SIZE = 16
-
-
-img_row = 128
-img_col = 128
-img_size = 128
-img_chan = 1
 epochnum = 100
 batchnum = 16
-input_size = (img_row, img_col, img_chan)
+input_size = (img_width, img_height, img_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
 model = model.attn_unet(sgd, input_size, loss.tversky_loss)
 hist = model.fit(X, y, validation_split=0.15,
