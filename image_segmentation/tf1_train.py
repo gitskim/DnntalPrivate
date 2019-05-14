@@ -116,7 +116,7 @@ hist = model.fit(X, y, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
                  verbose=True)
 
-model.save('5_14_1a.h5')
+model.save('5_14_8p.h5')
 
 print(hist)
 
