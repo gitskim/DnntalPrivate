@@ -14,11 +14,13 @@ import time
 import uuid
 import base64
 
-img_width, img_height = 150, 150
-model_path = './models/model.h5'
-model_weights_path = './models/weights.h5'
-model = load_model(model_path)
-#model.load_weights(model_weights_path)
+import predict_classifier_1 as pred
+
+img_width, img_height = 224, 224
+
+model_path_classifier = './models/model_classifier.h5'
+model = load_model(model_path_classifier)
+
 graph = tf.get_default_graph()
 
 UPLOAD_FOLDER = 'uploads'
@@ -29,19 +31,13 @@ def get_as_base64(url):
 
 def predict(file):
     with graph.as_default():
-        x = load_img(file, target_size=(img_width,img_height))
-        x = img_to_array(x)
-        x = np.expand_dims(x, axis=0)
-        array = model.predict(x)
-        result = array[0]
-        answer = np.argmax(result)
-        if answer == 0:
-            print("Label: Daisy")
-        elif answer == 1:
-            print("Label: Rose")
-        elif answer == 2:
-            print("Label: Sunflower")
-        return answer
+        result = pred.predict(file)
+        result = result[0][1]
+        if result < 0.5:
+            print("Label: no cavity")
+        elif result > 0.5:
+            print("Label: cavity")
+        return result
 
 def my_random_string(string_length=10):
     """Returns a random string of length string_length."""
@@ -74,12 +70,10 @@ def upload_file():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             result = predict(file_path)
-            if result == 0:
-                label = 'Daisy'
-            elif result == 1:
-                label = 'Rose'			
-            elif result == 2:
-                label = 'Sunflowers'
+            if result < 0.5:
+                label = 'No cavity'
+            elif result > 0.5:
+                label = 'Cavity'			
             print(result)
             print(file_path)
             filename = my_random_string(6) + filename
