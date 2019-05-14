@@ -6,6 +6,11 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras import backend as K
 import tensorflow as tf
 
+import numpy as np
+
+from tensorflow.keras import Model
+from tensorflow.keras.layers import Dense, Flatten
+
 batch_size = 128
 num_classes = 10
 epochs = 12
