@@ -49,6 +49,22 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
+
+class MyModel(Model):
+    def __init__(self):
+        super(MyModel, self).__init__()
+        self.flatten = Flatten()
+        self.d1 = Dense(128, activation='relu')
+        self.d2 = Dense(10, activation='softmax')
+
+    def call(self, x):
+        x = self.flatten(x)
+        x = self.d1(x)
+        return self.d2(x)
+
+
+model = MyModel()
+
 model.compile(loss=tf.keras.losses.categorical_crossentropy,
               optimizer=tf.keras.optimizers.Adadelta(),
               metrics=['accuracy'])
