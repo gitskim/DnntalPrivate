@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
+
 mnist = tf.keras.datasets.mnist
 st = tf.keras.datasets.mnist
 
@@ -13,8 +14,9 @@ x_train = x_train[..., tf.newaxis]
 x_test = x_test[..., tf.newaxis]
 
 train_ds = tf.data.Dataset.from_tensor_slices(
-            (x_train, y_train)).shuffle(10000).batch(32)
+    (x_train, y_train)).shuffle(10000).batch(32)
 test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
+
 
 class MyModel(Model):
     def __init__(self):
@@ -22,11 +24,11 @@ class MyModel(Model):
         self.conv1 = Conv2D(32, 3, activation='relu')
         self.flatten = Flatten()
         self.d2 = Dense(10, activation='softmax')
-        
+
         self.two = Conv2D(32, 3, activation='relu')
         self.thr = Flatten()
         self.fiv = Dense(10, activation='softmax')
-         
+
         self.add = tf.keras.layers.Add()
 
     def call(self, x, y):
@@ -38,29 +40,30 @@ class MyModel(Model):
         add = self.add([x, y])
         return self.fiv(add)
 
+
 model = MyModel()
 
-loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
+loss_object = tf.keras.losses.BinaryCrossentropy()
 
 optimizer = tf.keras.optimizers.Adam()
 
 train_loss = tf.keras.metrics.Mean(name='train_loss')
-train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
+train_accuracy = tf.keras.metrics.BinaryAccuracy(name='train_accuracy')
 
 test_loss = tf.keras.metrics.Mean(name='test_loss')
-test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
+test_accuracy = tf.keras.metrics.BinaryAccuracy(name='test_accuracy')
 
 
 @tf.function
 def train_step(images, labels):
-      with tf.GradientTape() as tape:
-            predictions = model(images, images)
-            loss = loss_object(labels, predictions)
-            gradients = tape.gradient(loss, model.trainable_variables)
-            optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+    with tf.GradientTape() as tape:
+        predictions = model(images, images)
+        loss = loss_object(labels, predictions)
+        gradients = tape.gradient(loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-            train_loss(loss)
-            train_accuracy(labels, predictions)
+        train_loss(loss)
+        train_accuracy(labels, predictions)
 
 
 @tf.function
@@ -79,6 +82,7 @@ for epoch in range(EPOCHS):
 
     for test_images, test_labels in test_ds:
         test_step(test_images, test_labels)
-        
+
     template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
-    print (template.format(epoch+1,train_loss.result(),train_accuracy.result()*100, test_loss.result(),test_accuracy.result()*100))
+    print (template.format(epoch + 1, train_loss.result(), train_accuracy.result() * 100, test_loss.result(),
+                           test_accuracy.result() * 100))
