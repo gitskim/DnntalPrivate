@@ -9,20 +9,20 @@ import sys
 # For building the model_2
 import tensorflow as tf
 import keras as keras
-from tensorflow.python.keras.models import Model, load_model
-from tensorflow.python.keras import backend as K
+from keras.models import Model, load_model
+from keras import backend as K
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
-from tensorflow.python.keras.layers import Activation, add, multiply, Lambda
-from tensorflow.python.keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
-from tensorflow.python.keras.optimizers import Adam, SGD, RMSprop
-from tensorflow.python.keras.initializers import glorot_normal, random_normal, random_uniform
-from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
-from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.layers.normalization import BatchNormalization
+from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, Conv2DTranspose
+from keras.layers import Activation, add, multiply, Lambda
+from keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
+from keras.optimizers import Adam, SGD, RMSprop
+from keras.initializers import glorot_normal, random_normal, random_uniform
+from keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
+from keras import backend as K
+from keras.layers.normalization import BatchNormalization
 from sklearn.metrics import roc_curve, auc, precision_recall_curve  # roc curve tools
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
+from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 from skimage.transform import resize
 
 import loss
@@ -47,9 +47,9 @@ print("... starting clahe ...")
 for i, path_original in enumerate(filelist_original):
     prep.clahe(path_original)
     print(path_original)
-    #filelist_original[i] = prep.center_crop(path_original)
-#for path_mask in enumerate(filelist_masks):
-    #filelist_masks[i] = prep.center_crop(path_original)
+    # filelist_original[i] = prep.center_crop(path_original)
+# for path_mask in enumerate(filelist_masks):
+# filelist_masks[i] = prep.center_crop(path_original)
 
 
 # Get and resize train images and masks
@@ -72,7 +72,7 @@ for i, filelist in enumerate(filelist_original):
 
     # Save images
     X[i] = x_img / 255
-    y[i] = mask/255
+    y[i] = mask / 255
 
 # Build U-Net model
 TARGET_SHAPE = 128
@@ -80,7 +80,6 @@ im_width = 128
 im_height = 128
 border = 5
 BATCH_SIZE = 16
-
 
 '''
 # explanation: https://software.intel.com/en-us/articles/hands-on-ai-part-14-image-data-preprocessing-and-augmentation
@@ -120,6 +119,8 @@ hist = model.fit(X, y, validation_split=0.15,
 model.save('5_14_1a.h5')
 
 print(hist)
+
+
 # Function to distort image
 # https://www.kaggle.com/bguberfain/elastic-transform-for-data-augmentation
 def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
@@ -154,6 +155,8 @@ def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     indices = np.reshape(y + dy, (-1, 1)), np.reshape(x + dx, (-1, 1)), np.reshape(z, (-1, 1))
 
     return map_coordinates(image, indices, order=1, mode='reflect').reshape(shape)
+
+
 '''
 # Apply transformation on image
 im_merge_t = elastic_transform(im_merge, im_merge.shape[1] * 2, im_merge.shape[1] * 0.08, im_merge.shape[1] * 0.08)
