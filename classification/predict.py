@@ -69,7 +69,7 @@ negative_valid_labels = []
 c = 0
 for img in negatives_cases_train:
     c += 1
-    train_data.append((img))
+    train_data.append((img, 0))
     if c == 1:
         break
 
@@ -77,7 +77,7 @@ for img in negatives_cases_train:
 count = 0
 for img in positives_cases_train:
     count += 1
-    train_data.append((img))
+    train_data.append((img, 1))
     if count == 1:
         break
 
@@ -96,7 +96,8 @@ for img in negatives_cases_train:
     negcount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
-    img = np.dstack([img, img, img])
+    if img.shape[2] == 1:
+        img = np.dstack([img, img, img])
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype(np.float32) / 255.
     label = to_categorical(0, num_classes=2)
@@ -111,7 +112,8 @@ for img in positives_cases_train:
     poscount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
-    img = np.dstack([img, img, img])
+    if img.shape[2] == 1:
+        img = np.dstack([img, img, img])
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype(np.float32) / 255.
     label = to_categorical(1, num_classes=2)
