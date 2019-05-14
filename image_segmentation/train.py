@@ -117,7 +117,7 @@ hist = model.fit(X, y, validation_split=0.15,
                  shuffle=True, epochs=epochnum, batch_size=batchnum,
                  verbose=True)
 
-model.save_weights('5-9-9p-unet-tverskyloss.h5')
+model.save('5-14-8p-unet-tverskyloss.h5')
 
 # Function to distort image
 # https://www.kaggle.com/bguberfain/elastic-transform-for-data-augmentation
