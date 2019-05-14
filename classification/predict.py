@@ -83,7 +83,9 @@ train_data = train_data.sample(frac=1.).reset_index(drop=True)
 # We will normalize the pixel values and resizing all the images to 224x224
 
 # Negatives cases
+negcount = 0
 for img in negatives_cases_train:
+    negcount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
@@ -93,9 +95,13 @@ for img in negatives_cases_train:
     label = to_categorical(0, num_classes=2)
     negative_valid_data.append(img)
     negative_valid_labels.append(label)
+    if negcount == 1:
+        break
 
 # Positives cases
+poscount = 0
 for img in positives_cases_train:
+    poscount += 1
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
@@ -105,6 +111,9 @@ for img in positives_cases_train:
     label = to_categorical(1, num_classes=2)
     positive_valid_data.append(img)
     positive_valid_labels.append(label)
+    if poscount == 1:
+        break
+
 
 # Convert the list into numpy arrays
 positive_data = np.array(positive_valid_data)
@@ -113,8 +122,8 @@ negative_data = np.array(negative_valid_data)
 print(positive_data.shape)
 print(negative_data.shape)
 
-positive_result = model.predict(x=positive_data[0])
+positive_result = model.predict(x=positive_data)
 print(positive_result)
 
-negative_result = model.predict(x=negative_data[0])
+negative_result = model.predict(x=negative_data)
 print(negative_result)
