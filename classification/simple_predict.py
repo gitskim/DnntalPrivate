@@ -32,36 +32,6 @@ import cv2
 from keras import backend as K
 import json
 
-model = load_model('5_13_23p.h5')
-
-# Define path to the data directory
-data_dir = '/home/ek2993/DnntalPrivate/cropped'
-
-# Path to train directory
-train_dir = os.path.join(data_dir, 'train')
-
-# Path to validation directory
-validation_dir = os.path.join(data_dir, 'val')
-
-# Get the path to the positive and negative sub-directories
-train_positive_dir = os.path.join(train_dir, 'cropped_positive_xrays')
-train_negative_dir = os.path.join(train_dir, 'cropped_negative_xrays')
-validation_positive_dir = os.path.join(validation_dir, 'cropped_positive_xrays')
-validation_negative_dir = os.path.join(validation_dir, 'cropped_negative_xrays')
-
-# Get the list of all the images
-positives_cases_train = glob.glob(os.path.join(train_positive_dir, '*.jpg'))
-negatives_cases_train = glob.glob(os.path.join(train_negative_dir, '*.jpg'))
-positives_cases_val = glob.glob(os.path.join(validation_positive_dir, '*.jpg'))
-negatives_cases_val = glob.glob(os.path.join(validation_negative_dir, '*.jpg'))
-
-# List that are going to contain validation images data and the corresponding labels
-positive_valid_data = []
-negative_valid_data = []
-positive_valid_labels = []
-negative_valid_labels = []
-
-
 def predict(img):
     train_data = []
 
@@ -95,13 +65,4 @@ def predict(img):
     negative_result = model.predict(x=negative_data)
     print(negative_result)
 
-
-
-# Go through all the negatives cases. The label for these cases will be 0
-c = 0
-for img in negatives_cases_train:
-    c += 1
-    predict(img)
-    if c == 1:
-        break
 
