@@ -55,8 +55,6 @@ negatives_cases_train = glob.glob(os.path.join(train_negative_dir, '*.jpg'))
 positives_cases_val = glob.glob(os.path.join(validation_positive_dir, '*.jpg'))
 negatives_cases_val = glob.glob(os.path.join(validation_negative_dir, '*.jpg'))
 
-
-
 # List that are going to contain validation images data and the corresponding labels
 positive_valid_data = []
 negative_valid_data = []
@@ -64,12 +62,10 @@ positive_valid_labels = []
 negative_valid_labels = []
 
 
-
-def predict(negatives_cases_train):
-    # An empty list. We will insert the data into this list in (img_path, label) format
+def predict(img):
     train_data = []
 
-    train_data.append((negatives_cases_train, 0))
+    train_data.append((img, 0))
 
     # Get a pandas dataframe from the data we have in our list
     train_data = pd.DataFrame(train_data, columns=['image', 'label'], index=None)
@@ -77,9 +73,10 @@ def predict(negatives_cases_train):
     # Shuffle the data
     train_data = train_data.sample(frac=1.).reset_index(drop=True)
 
+    # We will convert into a image with 3 channels.
+    # We will normalize the pixel values and resizing all the images to 224x224
+
     # Negatives cases
-    negcount = 0
-    img = negatives_cases_train
     img = cv2.imread(str(img))
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
@@ -90,7 +87,6 @@ def predict(negatives_cases_train):
     negative_valid_data.append(img)
     negative_valid_labels.append(label)
 
-
     # Convert the list into numpy arrays
     negative_data = np.array(negative_valid_data)
 
@@ -100,4 +96,12 @@ def predict(negatives_cases_train):
     print(negative_result)
 
 
-predict(negatives_cases_train)
+
+# Go through all the negatives cases. The label for these cases will be 0
+c = 0
+for img in negatives_cases_train:
+    c += 1
+    predict(img)
+    if c == 1:
+        break
+
