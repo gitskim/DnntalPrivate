@@ -16,7 +16,7 @@ from tensorflow.python.keras.layers import Input, concatenate, Conv2D, MaxPoolin
 from tensorflow.python.keras.layers import Activation, add, multiply, Lambda
 from tensorflow.python.keras.layers import AveragePooling2D, average, UpSampling2D, Dropout
 from tensorflow.python.keras.optimizers import Adam, SGD, RMSprop
-from tensorflow.python.keras.initializers import glorot_normal, random_normal, random_uniform
+from tensorflow.python.keras.initializers import glorot_normal
 from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard, EarlyStopping
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.layers.normalization import BatchNormalization
@@ -29,17 +29,17 @@ import loss
 import model
 import preprocessing as prep
 
-PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
+PATH_TRAIN = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI'
 # Preprocessing
 im_width = 128
 im_height = 128
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/original', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/original/xrays', '*.jpg'))
 filelist_original = sorted(filelist_original)
 filelist_masks = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/original/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
 print("... clahe ...")
@@ -96,7 +96,7 @@ model.fit_generator(datagen.flow(X, y, batch_size=32),
 epochnum = 100
 batchnum = 16
 
-input_size = (im_width, img_height, img_chan)
+input_size = (im_width, im_height, im_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
 model = model.unet(sgd, input_size, loss.tversky_loss)
 hist = model.fit(X, y, validation_split=0.15,

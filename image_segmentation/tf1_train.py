@@ -29,18 +29,17 @@ import loss
 import model
 import preprocessing as prep
 
-PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
+PATH_TRAIN = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI'
 # Preprocessing
 im_width = 128
 im_height = 128
-border = 5
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/original', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/original/xrays', '*.jpg'))
 filelist_original = sorted(filelist_original)
 filelist_masks = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/original/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
 print("... starting clahe ...")
@@ -103,13 +102,10 @@ model.fit_generator(datagen.flow(X, y, batch_size=32),
                     steps_per_epoch=len(x_train) / 32, epochs=epochs)
 '''
 
-img_row = 128
-img_col = 128
-img_size = 128
-img_chan = 1
 epochnum = 100
 batchnum = 16
-input_size = (img_row, img_col, img_chan)
+
+input_size = (im_width, im_height, im_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
 model = model.unet(sgd, input_size, loss.tversky_loss)
 hist = model.fit(X, y, validation_split=0.15,

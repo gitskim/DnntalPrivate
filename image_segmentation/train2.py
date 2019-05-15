@@ -29,15 +29,15 @@ import loss
 import model
 import preprocessing as prep
 
-# PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
+PATH_TRAIN = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI'
 # Preprocessing
 im_width = 128
 im_height = 128
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
-PATH_TRAIN = 'train/original/*.jpg'
+PATH_TRAIN = 'original/xrays/*.jpg'
 filelist_original = glob.glob(PATH_TRAIN)
-PATH_TRAIN2 = 'train/masks/*.jpg'
+PATH_TRAIN2 = 'original/masks/*.jpg'
 filelist_masks = glob.glob(PATH_TRAIN2)
 filelist_masks = sorted(filelist_masks)
 
