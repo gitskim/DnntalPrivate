@@ -28,8 +28,7 @@ from skimage.transform import resize
 import loss
 import model
 import preprocessing as prep
-
-PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
+PATH_TRAIN = '/home/ek2993/DnntalPrivate/original'
 # Preprocessing
 im_width = 128
 im_height = 128
@@ -37,10 +36,10 @@ border = 5
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/original', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/xrays', '*.jpg'))
 filelist_original = sorted(filelist_original)
 filelist_masks = glob.glob(
-    os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
+    os.path.join(PATH_TRAIN + '/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
 print("... starting clahe ...")
