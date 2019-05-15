@@ -31,43 +31,54 @@ from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
 import json
+from PIL import Image
 
 model_path_classifier = './models/model_classifier.h5'
 model = load_model(model_path_classifier)
 
 def predict(img):
-    train_data = []
-    valid_data = []
-
-    valid_labels = []
-
-    train_data.append((img, 0))
-
-    # Get a pandas dataframe from the data we have in our list
-    train_data = pd.DataFrame(train_data, columns=['image', 'label'], index=None)
-
-    # Shuffle the data
-    train_data = train_data.sample(frac=1.).reset_index(drop=True)
 
     # We will convert into a image with 3 channels.
     # We will normalize the pixel values and resizing all the images to 224x224
     img = cv2.imread(str(img))
+    return result_predict(img)
+
+def result_predict(img):
+
+    valid_data = []
+
     img = cv2.resize(img, (224, 224))
     if img.shape[2] == 1:
         img = np.dstack([img, img, img])
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.astype(np.float32) / 255.
-    label = to_categorical(0, num_classes=2)
     valid_data.append(img)
-    valid_labels.append(label)
 
     # Convert the list into numpy arrays
     data = np.array(valid_data)
 
-    print(data.shape)
-
     result = model.predict(x=data)
-    print(result)
     return result
 
+# def post_processing(path_img):
+#print(predict('../../Dataset/dentist_AI/cropped/val/cropped_positive_xrays/file2_20.jpg'))
 
+def post_processing(img_path):
+
+    img=cv2.imread(img_path)
+    array2 = img.copy()
+    length,wide, z = img.shape
+    size = 224 
+    length = int(length/size)*size
+    wide = int(wide/size)*size
+
+    for x in range(0,wide,size):
+        for y in range(0,length,size):
+            
+            crop = array2[y:y+size,x:x+size]
+            # Send to predcit 
+            number = result_predict(crop)[0][1]
+            if number > 0.5:
+                array2[y:y+size,x:x+size]=0
+    resultat=Image.fromarray(array2, 'RGB')
+    return resultat
