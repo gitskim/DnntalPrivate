@@ -244,7 +244,7 @@ history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=
                               class_weight={0:1.0, 1:0.4})
 
 # serialize model to JSON
-model.save('5_13_23p.h5')
+model.save('5_14_24p_class.h5')
 
 # serialize weights to HDF5
 print(history.history)
