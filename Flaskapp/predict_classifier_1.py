@@ -1,39 +1,14 @@
 from keras.models import load_model
-import os
-import glob
 import h5py
-import shutil
-import imgaug as aug
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
-import imgaug.augmenters as iaa
-from os import listdir, makedirs, getcwd, remove
-from os.path import isfile, join, abspath, exists, isdir, expanduser
 from PIL import Image
-from pathlib import Path
 from skimage.io import imread
-from skimage.transform import resize
-from keras.models import Sequential
 from keras.models import Model
-from keras.applications.vgg16 import VGG16, preprocess_input
-from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
-from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
-from keras.layers import GlobalMaxPooling2D
-from keras.layers.normalization import BatchNormalization
-from keras.layers.merge import Concatenate
-from keras.models import Model
-from keras.optimizers import Adam, SGD, RMSprop
-from keras.callbacks import ModelCheckpoint, Callback, EarlyStopping
-from keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
-import json
-from PIL import Image
 
-model_path_classifier = './models/model_classifier.h5'
+model_path_classifier = '../Flaskapp/models/model_classifier.h5'
 model = load_model(model_path_classifier)
 
 def predict(img):
