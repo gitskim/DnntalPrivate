@@ -1,3 +1,5 @@
+#Model using a focal loss function
+
 import os
 import cv2
 import glob

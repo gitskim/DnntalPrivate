@@ -29,33 +29,20 @@ ALLOWED_EXTENSIONS = set(['jpg', 'jpeg'])
 def get_as_base64(url):
     return base64.b64encode(requests.get(url).content)
 
-def checking(image):
-    array2 = image.copy()
-    length,wide, z = image.shape
-    size = 128 
-    length = int(length/size)*size
-    wide = int(wide/size)*size
-
-    for x in range(0,wide,size):
-        for y in range(0,length,size):
-            
-            crop = array2[y:y+size,x:x+size]
-            # Send to predcit 
-            # number = model.predict(crop)
-            number = np.random.randint(0,2)
-            if number == 1:
-                array2[y:y+size,x:x+size]=0
-    return array2
+# def predict(file):
+#     with graph.as_default():
+#         result = pred.predict(file)
+#         result = result[0][1]
+#         if result < 0.5:
+#             print("Label: no cavity")
+#         elif result > 0.5:
+#             print("Label: cavity")
+#         return result
 
 def predict(file):
     with graph.as_default():
-        result = pred.predict(file)
-        result = result[0][1]
-        if result < 0.5:
-            print("Label: no cavity")
-        elif result > 0.5:
-            print("Label: cavity")
-        return result
+        image = pred.post_processing(file)
+        image.save('uploads/prediction23.jpg')
 
 def my_random_string(string_length=10):
     """Returns a random string of length string_length."""
@@ -87,18 +74,21 @@ def upload_file():
 
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            result = predict(file_path)
-            if result < 0.5:
-                label = 'No cavity'
-            elif result > 0.5:
-                label = 'Cavity'			
-            print(result)
-            print(file_path)
+            # result = predict(file_path)
+            # if result < 0.5:
+            #     label = 'No cavity'
+            # elif result > 0.5:
+            #     label = 'Cavity'			
+            # print(result)
+            # print(file_path)
+            predict(file_path)
+            label='Go to treat these cavities please.'
             filename = my_random_string(6) + filename
 
             os.rename(file_path, os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print("--- %s seconds ---" % str (time.time() - start_time))
-            return render_template('template.html', label=label, imagesource='../uploads/' + filename)
+            # return render_template('template.html', label=label, imagesource='../uploads/' + filename)
+            return render_template('template.html', label=label, imagesource1='../uploads/prediction23.jpg')
 
 from flask import send_from_directory
 
