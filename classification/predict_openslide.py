@@ -34,6 +34,7 @@ import json
 
 def predict(img):
     model = load_model('5_14_24p_class.h5')
+
     '''
     train_data = []
     negative_valid_labels = []
