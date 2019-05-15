@@ -29,7 +29,7 @@ import loss
 import model
 import preprocessing as prep
 
-PATH_TRAIN = '/home/ek2993/DnntalPrivate/original'
+PATH_TRAIN = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/original'
 # Preprocessing
 im_width = 128
 im_height = 128
