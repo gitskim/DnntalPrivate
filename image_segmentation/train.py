@@ -33,7 +33,6 @@ PATH_TRAIN = '/home/ek2993/DnntalPrivate/dentist_AI'
 # Preprocessing
 im_width = 128
 im_height = 128
-border = 5
 im_chan = 1  # Number of channels: first is original and second cumsum(axis=0)
 
 filelist_original = glob.glob(
@@ -43,13 +42,10 @@ filelist_masks = glob.glob(
     os.path.join(PATH_TRAIN + '/train/masks', '*.jpg'))
 filelist_masks = sorted(filelist_masks)
 
-print("... starint clahe ...")
+print("... clahe ...")
 for i, path_original in enumerate(filelist_original):
     prep.clahe(path_original)
     print(path_original)
-    #filelist_original[i] = prep.center_crop(path_original)
-#for path_mask in enumerate(filelist_masks):
-    #filelist_masks[i] = prep.center_crop(path_original)
 
 
 # Get and resize train images and masks
@@ -74,14 +70,6 @@ for i, filelist in enumerate(filelist_original):
     X[i] = x_img / 255
     y[i] = mask/255
 
-# Build U-Net model
-TARGET_SHAPE = 128
-im_width = 128
-im_height = 128
-border = 5
-BATCH_SIZE = 16
-
-
 '''
 # explanation: https://software.intel.com/en-us/articles/hands-on-ai-part-14-image-data-preprocessing-and-augmentation
 datagen = ImageDataGenerator(
@@ -104,13 +92,11 @@ model.fit_generator(datagen.flow(X, y, batch_size=32),
                     steps_per_epoch=len(x_train) / 32, epochs=epochs)
 '''
 
-img_row = 128
-img_col = 128
-img_size = 128
-img_chan = 1
+
 epochnum = 100
 batchnum = 16
-input_size = (img_row, img_col, img_chan)
+
+input_size = (im_width, img_height, img_chan)
 sgd = SGD(lr=0.01, momentum=0.9)
 model = model.unet(sgd, input_size, loss.tversky_loss)
 hist = model.fit(X, y, validation_split=0.15,
