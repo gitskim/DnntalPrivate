@@ -1,13 +1,9 @@
 import os
 import glob
-import h5py
-import shutil
 import imgaug as aug
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np
+import pandas as pd
 import imgaug.augmenters as iaa
-from os import listdir, makedirs, getcwd, remove
-from os.path import isfile, join, abspath, exists, isdir, expanduser
 from PIL import Image
 from pathlib import Path
 from skimage.io import imread
@@ -17,16 +13,11 @@ from keras.models import Model
 from keras.applications.vgg16 import VGG16, preprocess_input
 from keras.preprocessing.image import ImageDataGenerator,load_img, img_to_array
 from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
-from keras.layers import GlobalMaxPooling2D
 from keras.layers.normalization import BatchNormalization
-from keras.layers.merge import Concatenate
 from keras.models import Model
 from keras.optimizers import Adam, SGD, RMSprop
 from keras.callbacks import ModelCheckpoint, Callback, EarlyStopping
 from keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix
 import cv2
 from keras import backend as K
 import json
@@ -244,7 +235,7 @@ history = model.fit_generator(train_data_gen, epochs=nb_epochs, steps_per_epoch=
                               class_weight={0:1.0, 1:0.4})
 
 # serialize model to JSON
-model.save('5_13_23p.h5')
+model.save('5_14_24p_class.h5')
 
 # serialize weights to HDF5
 print(history.history)

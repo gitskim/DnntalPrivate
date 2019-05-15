@@ -1,3 +1,6 @@
+#In this preprocessing we center crop the images to get only one dize of image. We don't loose information because the interesting areas are in the center of the images, not in the corners.
+
+
 import cv2
 from PIL import Image
 

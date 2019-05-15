@@ -57,3 +57,5 @@ def post_processing(img_path):
                 array2[y:y+size,x:x+size]=0
     resultat=Image.fromarray(array2, 'RGB')
     return resultat
+
+
