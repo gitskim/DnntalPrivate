@@ -23,7 +23,7 @@ from keras import backend as K
 import json
 
 # Define path to the data directory
-data_dir = '/home/ek2993/DnntalPrivate/cropped'
+data_dir = '/Users/arielcohencodar/Desktop/These_Phoebe/src/Dataset/dentist_AI/cropped'
 
 # Path to train directory
 train_dir = os.path.join(data_dir, 'train')

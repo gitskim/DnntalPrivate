@@ -51,7 +51,7 @@ def tn(y_true, y_pred):
     return tn
 
 
-# dice loss
+# dice loss - good for imbalanced dataset. nice gradient. to maximize the coefficients while cross entropy does not maximize the coefficients
 def dsc(y_true, y_pred):
     smooth = 1.
     y_true_f = K.flatten(y_true)

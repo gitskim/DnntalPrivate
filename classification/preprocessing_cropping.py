@@ -60,11 +60,6 @@ im_height = 256
 
 #-->Function to crop and save
 def crop(image_path, coords, saved_location, isMask=False):
-    '''
-    @param image_path: The path to the image to edit
-    @param coords: A tuple of x/y coordinates (x1, y1, x2, y2)
-    @param saved_location: Path to save the cropped image
-    '''
     image_obj = Image.open(image_path)
     cropped_image = image_obj.crop(coords)
     if isMask or image_obj.mode != "L":
