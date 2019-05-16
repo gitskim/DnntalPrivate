@@ -4,7 +4,8 @@ Ariel Cohen-Codar (ac4391)
 Tomer Zwi (tz2247)
 Suhyun Kim (ek2993)
 
-1. Youtube Video:
+1. Youtube Video: https://youtu.be/2eegzXgroKQ 
+
 2. Complete Code: https://github.com/gitskim/DnntalPrivate
 3. Write-up: http://www.columbia.edu/cu/dnntal/dnntal_report.pdf
 4. Presentation slides (We used our website as presentation slides): http://www.columbia.edu/cu/dnntal/
